@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MM Cooking Bowl</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --orange:#F97316;--orange-hover:#EA580C;--orange-light:#FFEDD5;
+  --white:#FFFFFF;--bg:#F8FAFC;--text:#0F172A;--text2:#64748B;
+  --veg:#16A34A;--nonveg:#DC2626;--border:#E2E8F0;
+}
+body{font-family:'Manrope',sans-serif;background:#fff;color:var(--text);overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Outfit',sans-serif}
+
+/* BG */
+#app-bg{
+  min-height:100vh;
+  background-image:url('https://static.prod-images.emergentagent.com/jobs/90c85498-9c3b-40db-8e83-76855311b095/images/382a96e03d5fe7e7c2568fa3730e927af4c8e9a869ad7afcc4b6401656b831e4.png');
+  background-repeat:repeat;background-attachment:fixed;background-size:300px;
+  position:relative;
+}
+#app-bg::before{content:'';position:fixed;inset:0;background:rgba(255,255,255,0.88);z-index:0;pointer-events:none}
+#app{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding-bottom:60px}
+
+/* HEADER */
+header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(255,255,255,0.85);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 24px;
+}
+.logo-area{display:flex;align-items:center;gap:10px}
+.logo-img{width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid var(--orange)}
+.logo-text h2{font-family:'Outfit',sans-serif;font-size:18px;font-weight:700;color:var(--text);line-height:1.1}
+.logo-text p{font-size:11px;color:var(--text2)}
+.nav-icons{display:flex;gap:8px}
+.nav-btn{
+  background:none;border:none;cursor:pointer;padding:8px;border-radius:10px;
+  color:var(--text);font-size:22px;transition:all .2s;position:relative;
+  display:flex;align-items:center;justify-content:center;
+}
+.nav-btn:hover{background:var(--orange-light);color:var(--orange)}
+.nav-btn.active{color:var(--orange)}
+.cart-badge{
+  position:absolute;top:2px;right:2px;background:var(--orange);color:#fff;
+  font-size:9px;font-weight:700;border-radius:50%;width:16px;height:16px;
+  display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;
+}
+
+/* PAGES */
+.page{display:none;padding:20px 24px}
+.page.active{display:block}
+
+/* DISCOUNT BANNER */
+.discount-banner{
+  background:linear-gradient(135deg,#F97316,#FB923C,#FDBA74);
+  border-radius:20px;padding:20px 24px;color:#fff;
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:24px;overflow:hidden;position:relative;
+}
+.discount-banner-text h3{font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;line-height:1.2}
+.discount-banner-text p{font-size:13px;opacity:.9;margin-top:4px}
+.discount-badge{
+  background:rgba(255,255,255,.22);border:2px solid rgba(255,255,255,.4);
+  border-radius:12px;padding:8px 14px;font-family:'Outfit',sans-serif;
+  font-size:13px;font-weight:700;white-space:nowrap;
+}
+.banner-img{width:80px;height:80px;object-fit:contain;opacity:.9}
+
+/* FILTER BUTTONS */
+.filters{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.filter-btn{
+  border:2px solid var(--border);background:#fff;border-radius:50px;
+  padding:8px 18px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;
+  cursor:pointer;transition:all .2s;color:var(--text2);
+}
+.filter-btn.all.active,.filter-btn.all:hover{background:var(--orange);border-color:var(--orange);color:#fff}
+.filter-btn.veg{color:var(--veg);border-color:var(--veg)}
+.filter-btn.veg.active,.filter-btn.veg:hover{background:var(--veg);color:#fff}
+.filter-btn.nonveg{color:var(--nonveg);border-color:var(--nonveg)}
+.filter-btn.nonveg.active,.filter-btn.nonveg:hover{background:var(--nonveg);color:#fff}
+.veg-label{font-family:'Outfit',sans-serif;font-weight:700;color:var(--veg);font-size:14px}
+.nonveg-label{font-family:'Outfit',sans-serif;font-weight:700;color:var(--nonveg);font-size:14px}
+
+/* FOOD GRID */
+.food-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.food-card{
+  background:#fff;border-radius:20px;overflow:hidden;
+  border:1px solid var(--border);
+  box-shadow:0 4px 20px rgba(0,0,0,0.05);
+  transition:transform .2s,box-shadow .2s;
+}
+.food-card:hover{transform:translateY(-4px);box-shadow:0 8px 30px rgba(249,115,22,0.12)}
+.food-card img{width:100%;height:180px;object-fit:cover}
+.food-card-body{padding:16px}
+.food-type-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.type-dot{
+  width:18px;height:18px;border-radius:3px;border:2px solid;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.type-dot.veg{border-color:var(--veg)}
+.type-dot.veg::after{content:'';width:8px;height:8px;background:var(--veg);border-radius:50%}
+.type-dot.nonveg{border-color:var(--nonveg)}
+.type-dot.nonveg::after{content:'';width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:8px solid var(--nonveg);margin-top:1px}
+.food-name{font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;color:var(--text)}
+.recommended-badge{
+  background:var(--orange-light);color:var(--orange);
+  font-size:10px;font-weight:700;font-family:'Outfit',sans-serif;
+  padding:2px 8px;border-radius:50px;margin-left:6px;
+}
+.food-price-row{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+.food-price{font-family:'Outfit',sans-serif;font-size:20px;font-weight:700;color:var(--text)}
+.add-btn{
+  background:var(--orange);color:#fff;border:none;border-radius:10px;
+  padding:8px 20px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;
+  cursor:pointer;transition:background .2s;display:flex;align-items:center;gap:6px;
+}
+.add-btn:hover{background:var(--orange-hover)}
+.qty-control{display:flex;align-items:center;gap:0;border-radius:10px;overflow:hidden;border:2px solid var(--orange)}
+.qty-btn{background:var(--orange);color:#fff;border:none;width:32px;height:32px;font-size:18px;cursor:pointer;font-weight:700;transition:background .2s}
+.qty-btn:hover{background:var(--orange-hover)}
+.qty-num{padding:0 12px;font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;color:var(--orange)}
+
+/* CART PAGE */
+.cart-header{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.back-btn{background:none;border:none;cursor:pointer;font-size:22px;color:var(--text);padding:4px}
+.cart-layout{display:grid;grid-template-columns:1fr 340px;gap:24px}
+@media(max-width:700px){.cart-layout{grid-template-columns:1fr}.cart-summary{order:2}}
+.cart-items-section{background:#fff;border-radius:20px;border:1px solid var(--border);overflow:hidden}
+.cart-section-title{font-family:'Outfit',sans-serif;font-size:18px;font-weight:700;padding:20px;border-bottom:1px solid var(--border)}
+.cart-item{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid #f1f5f9}
+.cart-item:last-child{border-bottom:none}
+.cart-item-img{width:64px;height:64px;border-radius:12px;object-fit:cover;flex-shrink:0}
+.cart-item-info{flex:1}
+.cart-item-name{font-family:'Outfit',sans-serif;font-size:15px;font-weight:600}
+.cart-item-price{font-size:13px;color:var(--text2);margin-top:2px}
+.remove-btn{background:none;border:none;cursor:pointer;color:#ef4444;font-size:18px;padding:4px}
+.cart-summary{background:#fff;border-radius:20px;border:1px solid var(--border);padding:20px;align-self:start}
+.summary-title{font-family:'Outfit',sans-serif;font-size:18px;font-weight:700;margin-bottom:16px}
+.summary-row{display:flex;justify-content:space-between;font-size:14px;color:var(--text2);margin-bottom:10px}
+.summary-row.total{font-size:16px;font-weight:700;color:var(--text);border-top:1px solid var(--border);padding-top:12px;margin-top:4px}
+.summary-row.discount{color:var(--veg)}
+.checkout-btn{
+  width:100%;background:var(--orange);color:#fff;border:none;border-radius:12px;
+  padding:14px;font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;
+  cursor:pointer;margin-top:16px;transition:background .2s;
+}
+.checkout-btn:hover{background:var(--orange-hover)}
+.empty-cart{text-align:center;padding:60px 20px}
+.empty-cart-icon{font-size:64px;margin-bottom:16px}
+.empty-cart h3{font-family:'Outfit',sans-serif;font-size:22px;font-weight:700;margin-bottom:8px}
+.empty-cart p{color:var(--text2);margin-bottom:20px}
+.browse-btn{background:var(--orange);color:#fff;border:none;border-radius:12px;padding:12px 28px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer}
+
+/* MODAL OVERLAY */
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;
+  align-items:center;justify-content:center;padding:20px;
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:#fff;border-radius:24px;width:100%;max-width:440px;
+  padding:32px;position:relative;animation:slideUp .3s ease;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;font-size:22px;color:var(--text2)}
+.modal h2{font-family:'Outfit',sans-serif;font-size:24px;font-weight:700;margin-bottom:6px}
+.modal p.sub{color:var(--text2);font-size:14px;margin-bottom:24px}
+.tab-row{display:flex;background:#f1f5f9;border-radius:12px;padding:4px;margin-bottom:24px}
+.tab-btn{flex:1;padding:10px;border:none;background:none;border-radius:9px;cursor:pointer;font-family:'Outfit',sans-serif;font-weight:600;font-size:14px;transition:all .2s;color:var(--text2)}
+.tab-btn.active{background:#fff;color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text)}
+.form-group input{
+  width:100%;border:1.5px solid var(--border);border-radius:10px;
+  padding:12px 14px;font-family:'Manrope',sans-serif;font-size:14px;outline:none;
+  transition:border .2s;
+}
+.form-group input:focus{border-color:var(--orange)}
+.submit-btn{
+  width:100%;background:var(--orange);color:#fff;border:none;border-radius:12px;
+  padding:14px;font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;
+  cursor:pointer;transition:background .2s;
+}
+.submit-btn:hover{background:var(--orange-hover)}
+.otp-row{display:flex;gap:10px;margin-bottom:18px}
+.otp-input{
+  flex:1;text-align:center;border:1.5px solid var(--border);border-radius:10px;
+  padding:14px 6px;font-family:'Outfit',sans-serif;font-size:20px;font-weight:700;
+  outline:none;transition:border .2s;
+}
+.otp-input:focus{border-color:var(--orange)}
+.otp-hint{font-size:12px;color:var(--text2);margin-bottom:16px;text-align:center}
+.error-msg{color:#ef4444;font-size:12px;margin-top:6px}
+
+/* SETTINGS DRAWER */
+.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:300}
+.drawer-overlay.open{display:block}
+.drawer{
+  position:fixed;top:0;left:-320px;width:300px;height:100%;background:#fff;z-index:301;
+  box-shadow:8px 0 40px rgba(0,0,0,0.15);transition:left .3s ease;
+  display:flex;flex-direction:column;overflow-y:auto;
+}
+.drawer.open{left:0}
+.drawer-header{padding:24px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.drawer-header h2{font-family:'Outfit',sans-serif;font-size:22px;font-weight:700}
+.drawer-close{background:none;border:none;cursor:pointer;font-size:22px;color:var(--text2)}
+.user-info-card{margin:16px;background:var(--orange-light);border-radius:14px;padding:14px}
+.user-info-card p.label{font-size:11px;color:var(--text2);margin-bottom:4px}
+.user-info-card p.name{font-family:'Outfit',sans-serif;font-size:15px;font-weight:700}
+.user-info-card p.email{font-size:12px;color:var(--text2)}
+.drawer-menu{padding:8px 12px;flex:1}
+.drawer-item{
+  display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:12px;
+  cursor:pointer;margin-bottom:4px;transition:background .2s;border:none;background:none;
+  width:100%;text-align:left;font-family:'Manrope',sans-serif;font-size:15px;font-weight:500;
+  color:var(--text);
+}
+.drawer-item:hover,.drawer-item.active-item{background:var(--orange-light);color:var(--orange)}
+.drawer-item.active-item{font-weight:600}
+.drawer-item-icon{font-size:20px;width:24px;text-align:center}
+.drawer-section{padding:16px 20px;border-top:1px solid var(--border)}
+.drawer-section h3{font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;color:var(--text2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.05em}
+.drawer-section p{font-size:13px;color:var(--text2);margin-bottom:6px}
+.drawer-section strong{color:var(--text);font-weight:600}
+.logout-btn{
+  width:calc(100% - 32px);margin:8px 16px 20px;background:none;border:2px solid #ef4444;
+  color:#ef4444;border-radius:12px;padding:12px;font-family:'Outfit',sans-serif;
+  font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;
+}
+.logout-btn:hover{background:#ef4444;color:#fff}
+
+/* ORDER TRACKING FLOATING */
+.order-float{
+  display:none;position:fixed;bottom:24px;right:24px;z-index:400;
+  background:#fff;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,0.18);
+  padding:20px 24px;width:300px;border-left:4px solid var(--orange);
+  animation:floatIn .4s ease;
+}
+.order-float.show{display:block}
+@keyframes floatIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.order-float-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.order-float-icon{width:44px;height:44px;object-fit:contain}
+.order-float h4{font-family:'Outfit',sans-serif;font-size:15px;font-weight:700}
+.order-float p{font-size:13px;color:var(--text2)}
+.order-float-close{position:absolute;top:10px;right:12px;background:none;border:none;cursor:pointer;color:var(--text2);font-size:16px}
+.order-progress{display:flex;align-items:center;gap:6px;margin-top:12px}
+.prog-step{flex:1;height:4px;border-radius:4px;background:#f1f5f9}
+.prog-step.done{background:var(--orange)}
+
+/* HAPPY MEAL */
+.happy-meal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center}
+.happy-meal-overlay.open{display:flex}
+.happy-meal-card{background:#fff;border-radius:28px;padding:48px 40px;text-align:center;animation:popIn .4s ease}
+@keyframes popIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+.happy-meal-card img{width:100px;height:100px;object-fit:contain;margin-bottom:16px}
+.happy-meal-card h2{font-family:'Outfit',sans-serif;font-size:28px;font-weight:800;color:var(--text);margin-bottom:8px}
+.happy-meal-card p{color:var(--text2);font-size:15px;margin-bottom:24px}
+.happy-close-btn{background:var(--orange);color:#fff;border:none;border-radius:14px;padding:14px 32px;font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;cursor:pointer}
+
+/* TOAST */
+.toast{
+  display:none;position:fixed;top:80px;right:24px;z-index:600;
+  background:var(--text);color:#fff;border-radius:12px;
+  padding:12px 20px;font-size:14px;font-family:'Manrope',sans-serif;
+  animation:toastIn .3s ease;max-width:280px;
+}
+.toast.show{display:block}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+/* HISTORY / WALLET / RECENT */
+.info-card{background:#fff;border-radius:16px;border:1px solid var(--border);padding:20px;margin-bottom:14px}
+.info-card h4{font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px}
+.info-card p{font-size:13px;color:var(--text2);line-height:1.6}
+.wallet-balance{font-family:'Outfit',sans-serif;font-size:32px;font-weight:800;color:var(--orange);margin:8px 0}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#f1f5f9}
+::-webkit-scrollbar-thumb{background:var(--orange);border-radius:3px}
+</style>
+</head>
+<body>
+<div id="app-bg">
+<div id="app">
+
+<!-- HEADER -->
+<header>
+  <div class="logo-area">
+    <img class="logo-img" src="https://customer-assets.emergentagent.com/job_90c85498-9c3b-40db-8e83-76855311b095/artifacts/jar0s7rv_WhatsApp%20Image%202026-05-26%20at%201.13.46%20PM.jpeg" alt="MM Cooking Bowl" onerror="this.style.display='none'">
+    <div class="logo-text">
+      <h2>MM Cooking Bowl</h2>
+      <p>Authentic Bharatiya Ruchi</p>
+    </div>
+  </div>
+  <div class="nav-icons">
+    <button class="nav-btn active" id="nav-home" data-testid="nav-home" onclick="showPage('home')" title="Home">🏠</button>
+    <button class="nav-btn" id="nav-cart" data-testid="nav-cart" onclick="showPage('cart')" title="Cart">
+      🛒<span class="cart-badge" id="cart-badge" style="display:none">0</span>
+    </button>
+    <button class="nav-btn" id="nav-settings" data-testid="nav-settings" onclick="openDrawer()" title="Settings">⚙️</button>
+  </div>
+</header>
+
+<!-- HOME PAGE -->
+<div class="page active" id="page-home">
+  <!-- Discount Banner -->
+  <div class="discount-banner">
+    <div class="discount-banner-text">
+      <h3>🎉 Save ₹49 on your order!</h3>
+      <p>Limited time offer — New restaurant launch special</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div class="discount-badge">USE: MMFIRST</div>
+      <img class="banner-img" src="https://static.prod-images.emergentagent.com/jobs/90c85498-9c3b-40db-8e83-76855311b095/images/d5249f9c03de553a2f76ad6024ef955839e48cf2d36785be68bc0c3148e43b84.png" alt="food" onerror="this.style.display='none'">
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <button class="filter-btn all active" data-testid="filter-all" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn veg" data-testid="filter-veg" onclick="setFilter('veg',this)"><span class="veg-label">🟢 VEG</span></button>
+    <button class="filter-btn nonveg" data-testid="filter-nonveg" onclick="setFilter('nonveg',this)"><span class="nonveg-label">🔴 NON VEG</span></button>
+  </div>
+
+  <!-- Food Grid -->
+  <div class="food-grid" id="food-grid"></div>
+</div>
+
+<!-- CART PAGE -->
+<div class="page" id="page-cart">
+  <div class="cart-header">
+    <button class="back-btn" onclick="showPage('home')">←</button>
+    <h2 style="font-family:'Outfit',sans-serif;font-size:24px;font-weight:700">Your Cart</h2>
+  </div>
+  <div id="cart-content"></div>
+</div>
+
+</div><!-- end #app -->
+</div><!-- end #app-bg -->
+
+<!-- SETTINGS DRAWER -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <h2>Settings</h2>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div id="user-info-area" style="display:none">
+    <div class="user-info-card">
+      <p class="label">Logged in as</p>
+      <p class="name" id="drawer-name">—</p>
+      <p class="email" id="drawer-email">—</p>
+    </div>
+  </div>
+  <div class="drawer-menu">
+    <button class="drawer-item active-item" onclick="setDrawerSection('accounts')">
+      <span class="drawer-item-icon">👤</span> Accounts
+    </button>
+    <button class="drawer-item" onclick="setDrawerSection('history')">
+      <span class="drawer-item-icon">📋</span> History
+    </button>
+    <button class="drawer-item" onclick="setDrawerSection('wallet')">
+      <span class="drawer-item-icon">💳</span> Wallet
+    </button>
+    <button class="drawer-item" onclick="setDrawerSection('recent')">
+      <span class="drawer-item-icon">🕐</span> Recent Visits
+    </button>
+  </div>
+  <div id="drawer-section-content" class="drawer-section"></div>
+  <div id="logout-area" style="display:none">
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="auth-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAuthModal()">✕</button>
+    <h2>Welcome to MM Cooking Bowl</h2>
+    <p class="sub">Login or create an account to place your order</p>
+    <div class="tab-row" id="auth-tabs">
+      <button class="tab-btn active" onclick="switchAuthTab('login')">Login</button>
+      <button class="tab-btn" onclick="switchAuthTab('signup')">Sign Up</button>
+    </div>
+    <div id="auth-form"></div>
+  </div>
+</div>
+
+<!-- HAPPY MEAL OVERLAY -->
+<div class="happy-meal-overlay" id="happy-overlay">
+  <div class="happy-meal-card">
+    <img src="https://static.prod-images.emergentagent.com/jobs/90c85498-9c3b-40db-8e83-76855311b095/images/3d94cd369d397f2863ef795daa8cd45a41e990f0af2612cfe6fa1562df69cafe.png" alt="yummy" onerror="this.textContent='😋';this.style.fontSize='80px'">
+    <h2>Have a Happy Meal! 🎉</h2>
+    <p>Your order has been delivered. Enjoy your delicious food!</p>
+    <button class="happy-close-btn" onclick="document.getElementById('happy-overlay').classList.remove('open');showPage('home')">Back to Menu</button>
+  </div>
+</div>
+
+<!-- ORDER TRACKING FLOAT -->
+<div class="order-float" id="order-float">
+  <button class="order-float-close" onclick="document.getElementById('order-float').classList.remove('show')">✕</button>
+  <div class="order-float-header">
+    <img class="order-float-icon" id="order-icon" src="https://static.prod-images.emergentagent.com/jobs/90c85498-9c3b-40db-8e83-76855311b095/images/d5249f9c03de553a2f76ad6024ef955839e48cf2d36785be68bc0c3148e43b84.png" alt="preparing">
+    <div>
+      <h4 id="order-status-title">Your order is preparing...</h4>
+      <p id="order-status-sub">Estimated: 10-15 mins</p>
+    </div>
+  </div>
+  <div class="order-progress">
+    <div class="prog-step done" id="prog1"></div>
+    <div class="prog-step" id="prog2"></div>
+    <div class="prog-step" id="prog3"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const MENU = [
+  {id:'fish-curry',name:'Fish Curry',price:179,type:'nonveg',img:'https://images.unsplash.com/photo-1654863404432-cac67587e25d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzV8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBmaXNoJTIwY3VycnklMjBib3dsJTIwY2xvc2UlMjB1cHxlbnwwfHx8fDE3Nzk3ODE4NzN8MA&ixlib=rb-4.1.0&q=85',recommended:true},
+  {id:'fish-fry',name:'Fish Fry',price:149,type:'nonveg',img:'https://images.unsplash.com/photo-1665401015549-712c0dc5ef85?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBmaXNoJTIwZnJ5JTIwZGlzaHxlbnwwfHx8fDE3Nzk3ODE4NzN8MA&ixlib=rb-4.1.0&q=85',recommended:false},
+  {id:'palak-paneer',name:'Palak Paneer',price:139,type:'veg',img:'https://images.pexels.com/photos/31249589/pexels-photo-31249589.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',recommended:false}
+];
+
+let cart = JSON.parse(localStorage.getItem('mmcart')||'[]');
+let user = JSON.parse(localStorage.getItem('mmuser')||'null');
+let currentFilter = 'all';
+let pendingItem = null;
+let authTab = 'login';
+let otpStep = false;
+let orderTimer = null;
+
+function saveCart(){localStorage.setItem('mmcart',JSON.stringify(cart))}
+function saveUser(){localStorage.setItem('mmuser',JSON.stringify(user))}
+
+// PAGES
+function showPage(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
+  const nb = document.getElementById('nav-'+p);
+  if(nb) nb.classList.add('active');
+  if(p==='cart') renderCart();
+}
+
+// MENU RENDER
+function renderMenu(){
+  const grid = document.getElementById('food-grid');
+  const items = currentFilter==='all'?MENU:MENU.filter(m=>m.type===currentFilter);
+  grid.innerHTML = items.map(item=>{
+    const qty = getCartQty(item.id);
+    return `<div class="food-card" data-id="${item.id}">
+      <img src="${item.img}" alt="${item.name}" loading="lazy">
+      <div class="food-card-body">
+        <div class="food-type-row">
+          <div class="type-dot ${item.type}"></div>
+          <span class="food-name">${item.name}${item.recommended?'<span class="recommended-badge">⭐ Recommended</span>':''}</span>
+        </div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:4px">${item.type==='veg'?'<span style="color:var(--veg);font-weight:700">🟢 VEG</span>':'<span style="color:var(--nonveg);font-weight:700">🔴 NON VEG</span>'}</div>
+        <div class="food-price-row">
+          <span class="food-price">₹${item.price}</span>
+          ${qty>0
+            ? `<div class="qty-control">
+                <button class="qty-btn" onclick="changeQty('${item.id}',-1)">−</button>
+                <span class="qty-num">${qty}</span>
+                <button class="qty-btn" onclick="changeQty('${item.id}',1)">+</button>
+               </div>`
+            : `<button class="add-btn" data-testid="add-to-cart-${item.id}" onclick="handleAdd('${item.id}')">+ Add</button>`
+          }
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setFilter(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMenu();
+}
+
+function getCartQty(id){
+  const item = cart.find(c=>c.id===id);
+  return item?item.quantity:0;
+}
+
+function handleAdd(id){
+  if(!user){pendingItem=id;openAuthModal();return;}
+  addToCart(id);
+}
+
+function addToCart(id){
+  const item = MENU.find(m=>m.id===id);
+  const existing = cart.find(c=>c.id===id);
+  if(existing) existing.quantity++;
+  else cart.push({...item,quantity:1});
+  saveCart();updateCartBadge();renderMenu();
+  showToast(`${item.name} added to cart! 🛒`);
+}
+
+function changeQty(id,delta){
+  if(!user){openAuthModal();return;}
+  const idx = cart.findIndex(c=>c.id===id);
+  if(idx===-1) return;
+  cart[idx].quantity += delta;
+  if(cart[idx].quantity<=0) cart.splice(idx,1);
+  saveCart();updateCartBadge();renderMenu();
+}
+
+function updateCartBadge(){
+  const total = cart.reduce((s,i)=>s+i.quantity,0);
+  const badge = document.getElementById('cart-badge');
+  badge.textContent=total;
+  badge.style.display=total>0?'flex':'none';
+}
+
+// CART RENDER
+function renderCart(){
+  const container = document.getElementById('cart-content');
+  if(cart.length===0){
+    container.innerHTML=`<div style="background:#fff;border-radius:20px;border:1px solid var(--border)">
+      <div class="empty-cart">
+        <div class="empty-cart-icon">🛒</div>
+        <h3>Your cart is empty</h3>
+        <p>Add some delicious items to get started!</p>
+        <button class="browse-btn" onclick="showPage('home')">Browse Menu</button>
+      </div></div>`;
+    return;
+  }
+  const subtotal = cart.reduce((s,i)=>s+i.price*i.quantity,0);
+  const discount = 49;
+  const delivery = 0;
+  const total = subtotal - discount + delivery;
+
+  container.innerHTML=`<div class="cart-layout">
+    <div>
+      <div class="cart-items-section">
+        <div class="cart-section-title">🍽️ MM Cooking Bowl</div>
+        ${cart.map(item=>`
+          <div class="cart-item">
+            <img class="cart-item-img" src="${item.img}" alt="${item.name}">
+            <div class="cart-item-info">
+              <div class="cart-item-name">${item.name}</div>
+              <div class="cart-item-price">₹${item.price} × ${item.quantity} = ₹${item.price*item.quantity}</div>
+            </div>
+            <div class="qty-control" style="border-radius:8px">
+              <button class="qty-btn" onclick="cartChangeQty('${item.id}',-1)">−</button>
+              <span class="qty-num">${item.quantity}</span>
+              <button class="qty-btn" onclick="cartChangeQty('${item.id}',1)">+</button>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="cart-summary">
+      <div class="summary-title">Bill Summary</div>
+      <div class="summary-row"><span>Item Total</span><span>₹${subtotal}</span></div>
+      <div class="summary-row discount"><span>🏷️ Launch Discount</span><span>− ₹${discount}</span></div>
+      <div class="summary-row"><span>Delivery Fee</span><span style="color:var(--veg)">FREE</span></div>
+      <div class="summary-row total"><span>Total</span><span>₹${total}</span></div>
+      <button class="checkout-btn" onclick="placeOrder()">Proceed to Pay →</button>
+      <p style="text-align:center;font-size:11px;color:var(--text2);margin-top:10px">Cash on Delivery</p>
+    </div>
+  </div>`;
+}
+
+function cartChangeQty(id,delta){
+  const idx = cart.findIndex(c=>c.id===id);
+  if(idx===-1) return;
+  cart[idx].quantity+=delta;
+  if(cart[idx].quantity<=0) cart.splice(idx,1);
+  saveCart();updateCartBadge();renderCart();renderMenu();
+}
+
+function placeOrder(){
+  if(!user){openAuthModal();return;}
+  cart=[];saveCart();updateCartBadge();renderCart();
+  showPage('home');renderMenu();
+  startOrderTracking();
+}
+
+// ORDER TRACKING
+function startOrderTracking(){
+  const float = document.getElementById('order-float');
+  const icon = document.getElementById('order-icon');
+  const title = document.getElementById('order-status-title');
+  const sub = document.getElementById('order-status-sub');
+  float.classList.add('show');
+  icon.src='https://static.prod-images.emergentagent.com/jobs/90c85498-9c3b-40db-8e83-76855311b095/images/d5249f9c03de553a2f76ad6024ef955839e48cf2d36785be68bc0c3148e43b84.png';
+  title.textContent='Your order is preparing...';
+  sub.textContent='Estimated: 10-15 mins';
+  document.getElementById('prog1').classList.add('done');
+  document.getElementById('prog2').classList.remove('done');
+  document.getElementById('prog3').classList.remove('done');
+
+  if(orderTimer) clearTimeout(orderTimer);
+  // For demo: 8s = on the way, 16s = delivered
+  orderTimer = setTimeout(()=>{
+    icon.src='https://static.prod-images.emergentagent.com/jobs/90c85498-9c3b-40db-8e83-76855311b095/images/48d60fdc04a86a51de5a2db05bc660aec8eec7bd353309a72bd93045dd4b11b7.png';
+    title.textContent='Your order is on the way! 🛵';
+    sub.textContent='Almost there!';
+    document.getElementById('prog2').classList.add('done');
+  },8000);
+  orderTimer = setTimeout(()=>{
+    float.classList.remove('show');
+    document.getElementById('prog3').classList.add('done');
+    document.getElementById('happy-overlay').classList.add('open');
+  },16000);
+}
+
+// AUTH MODAL
+function openAuthModal(tab='login'){
+  authTab=tab;
+  document.getElementById('auth-modal').classList.add('open');
+  renderAuthForm();
+}
+function closeAuthModal(){
+  document.getElementById('auth-modal').classList.remove('open');
+  pendingItem=null;otpStep=false;
+}
+function switchAuthTab(tab){
+  authTab=tab;otpStep=false;
+  document.querySelectorAll('#auth-tabs .tab-btn').forEach((b,i)=>{
+    b.classList.toggle('active',(i===0&&tab==='login')||(i===1&&tab==='signup'));
+  });
+  renderAuthForm();
+}
+function renderAuthForm(){
+  const f = document.getElementById('auth-form');
+  if(otpStep){
+    f.innerHTML=`
+      <p style="font-size:14px;color:var(--text2);margin-bottom:16px;text-align:center">Enter the 6-digit OTP sent to your mobile</p>
+      <p class="otp-hint">Demo OTP: <strong>123456</strong></p>
+      <div class="otp-row">
+        ${[0,1,2,3,4,5].map(i=>`<input class="otp-input" maxlength="1" id="otp${i}" oninput="otpNext(${i})" type="text" inputmode="numeric">`).join('')}
+      </div>
+      <div id="otp-error" class="error-msg" style="text-align:center;margin-bottom:12px"></div>
+      <button class="submit-btn" onclick="verifyOTP()">Verify OTP ✓</button>
+      <p style="text-align:center;margin-top:12px;font-size:12px;color:var(--text2)"><a href="#" style="color:var(--orange);text-decoration:none" onclick="otpStep=false;renderAuthForm()">← Back</a></p>`;
+    setTimeout(()=>document.getElementById('otp0')&&document.getElementById('otp0').focus(),100);
+    return;
+  }
+  if(authTab==='login'){
+    f.innerHTML=`
+      <div class="form-group"><label>Email or Mobile</label><input type="text" id="login-email" placeholder="Enter your email or mobile" autocomplete="username"></div>
+      <div class="form-group"><label>Password</label><input type="password" id="login-pass" placeholder="Enter your password" autocomplete="current-password"></div>
+      <div id="login-error" class="error-msg" style="margin-bottom:12px"></div>
+      <button class="submit-btn" onclick="doLogin()">Login</button>`;
+  } else {
+    f.innerHTML=`
+      <div class="form-group"><label>Full Name</label><input type="text" id="su-name" placeholder="Your full name"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="su-email" placeholder="your@email.com" autocomplete="username"></div>
+      <div class="form-group"><label>Mobile Number</label><input type="tel" id="su-mobile" placeholder="10-digit mobile number"></div>
+      <div class="form-group"><label>Password</label><input type="password" id="su-pass" placeholder="Create a password" autocomplete="new-password"></div>
+      <div id="su-error" class="error-msg" style="margin-bottom:12px"></div>
+      <button class="submit-btn" onclick="doSignup()">Get OTP →</button>`;
+  }
+}
+
+function doLogin(){
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  if(!email||!pass){document.getElementById('login-error').textContent='Please fill all fields';return;}
+  const stored = JSON.parse(localStorage.getItem('mmuser_data_'+email)||'null');
+  if(!stored||stored.password!==pass){
+    document.getElementById('login-error').textContent='Invalid credentials. Try signing up first.';return;
+  }
+  user={name:stored.name,email:stored.email,mobile:stored.mobile};
+  saveUser();afterLogin();
+}
+
+function doSignup(){
+  const name=document.getElementById('su-name').value.trim();
+  const email=document.getElementById('su-email').value.trim();
+  const mobile=document.getElementById('su-mobile').value.trim();
+  const pass=document.getElementById('su-pass').value;
+  if(!name||!email||!mobile||!pass){document.getElementById('su-error').textContent='Please fill all fields';return;}
+  if(mobile.length<10){document.getElementById('su-error').textContent='Enter a valid 10-digit mobile number';return;}
+  localStorage.setItem('mmuser_data_'+email,JSON.stringify({name,email,mobile,password:pass}));
+  user={name,email,mobile};
+  otpStep=true;renderAuthForm();
+}
+
+function otpNext(i){
+  const v=document.getElementById('otp'+i).value;
+  if(v&&i<5) document.getElementById('otp'+(i+1)).focus();
+}
+
+function verifyOTP(){
+  let otp='';
+  for(let i=0;i<6;i++) otp+=document.getElementById('otp'+i).value;
+  if(otp!=='123456'){document.getElementById('otp-error').textContent='Incorrect OTP. Use 123456 for demo.';return;}
+  saveUser();afterLogin();
+}
+
+function afterLogin(){
+  closeAuthModal();updateUserUI();showToast(`Welcome, ${user.name}! 👋`);
+  if(pendingItem){const id=pendingItem;pendingItem=null;addToCart(id);}
+}
+
+function logout(){
+  user=null;localStorage.removeItem('mmuser');
+  updateUserUI();closeDrawer();showToast('Logged out successfully');cart=[];saveCart();updateCartBadge();renderMenu();
+}
+
+function updateUserUI(){
+  const area=document.getElementById('user-info-area');
+  const logout=document.getElementById('logout-area');
+  if(user){
+    area.style.display='block';logout.style.display='block';
+    document.getElementById('drawer-name').textContent=user.name;
+    document.getElementById('drawer-email').textContent=user.email;
+  } else {
+    area.style.display='none';logout.style.display='none';
+  }
+}
+
+// DRAWER
+function openDrawer(){
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawer-overlay').classList.add('open');
+  setDrawerSection('accounts');
+}
+function closeDrawer(){
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('open');
+}
+function setDrawerSection(s){
+  document.querySelectorAll('.drawer-item').forEach(i=>i.classList.remove('active-item'));
+  event&&event.currentTarget&&event.currentTarget.classList.add('active-item');
+  const c=document.getElementById('drawer-section-content');
+  if(s==='accounts'){
+    c.innerHTML=`<h3>Account Information</h3>`+
+      (user?`<p><strong>Name</strong><br>${user.name}</p><p style="margin-top:8px"><strong>Email</strong><br>${user.email}</p><p style="margin-top:8px"><strong>Mobile</strong><br>${user.mobile}</p>`
+        :`<p>Not logged in.</p><button class="submit-btn" style="margin-top:12px" onclick="closeDrawer();openAuthModal()">Login / Sign Up</button>`);
+  } else if(s==='history'){
+    c.innerHTML=`<h3>Order History</h3><p>No orders yet. Start ordering delicious food!</p>`;
+  } else if(s==='wallet'){
+    c.innerHTML=`<h3>My Wallet</h3><div class="wallet-balance">₹0.00</div><p>Your wallet is empty. Earnings from referrals will appear here.</p>`;
+  } else if(s==='recent'){
+    c.innerHTML=`<h3>Recent Visits</h3><div class="info-card"><h4>MM Cooking Bowl</h4><p>Today — Authenticated Bharatiya Ruchi</p></div>`;
+  }
+}
+
+// TOAST
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// INIT
+updateCartBadge();
+updateUserUI();
+renderMenu();
+</script>
+</body>
+</html>
