@@ -1,6 +1,26 @@
-git clone https://github.com/2tomoee-rgb/mm-Indian-taste.git
-cd mm-Indian-taste
-# Replace .github/workflows/ci.yml with the fixed version
-git add .github/workflows/ci.yml
-git commit -m "Fix: Upload only HTML files to avoid symlinks and size issues"
-git push
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Build project
+        run: |
+          # Add your build commands here
+          echo "Building project..."
+      
+      - name: Upload HTML files
+        uses: actions/upload-artifact@v3
+        with:
+          name: html-files
+          path: |
+            **/*.html
+          retention-days: 30
