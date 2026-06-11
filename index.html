@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MM Cooking Bowl</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -291,7 +293,7 @@ header{
 <!-- HEADER -->
 <header>
   <div class="logo-area">
-    <img class="logo-img" src="https://customer-assets.emergentagent.com/job_90c85498-9c3b-40db-8e83-76855311b095/artifacts/jar0s7rv_WhatsApp%20Image%202026-05-26%20at%201.13.46%20PM.jpeg" alt="MM Cooking Bowl" onerror="this.style.display='none'">
+    <img class="logo-img" src="https://customer-assets.emergentagent.com/job_90c85498-9c3b-40db-8e83-76855311b095/artifacts/jar0s7rv_WhatsApp%20Image%202026-05-26%20at%201.13.46%20PM.jpeg" alt="MM">
     <div class="logo-text">
       <h2>MM Cooking Bowl</h2>
       <p>Authentic Bharatiya Ruchi</p>
@@ -316,7 +318,7 @@ header{
     </div>
     <div style="display:flex;align-items:center;gap:14px">
       <div class="discount-badge">USE: MMFIRST</div>
-      <img class="banner-img" src="https://static.prod-images.emergentagent.com/jobs/90c85498-9c3b-40db-8e83-76855311b095/images/d5249f9c03de553a2f76ad6024ef955839e48cf2d36785be68bc0c3148e43b84.png" alt="food" onerror="this.style.display='none'">
+      <img class="banner-img" src="https://static.prod-images.emergentagent.com/jobs/90c85498-9c3b-40db-8e83-76855311b095/images/d5249f9c03de553a2f76ad6024ef955839e48cf2d36785be68bc0c3148e43b84.png" alt="Bowl">
     </div>
   </div>
 
@@ -394,7 +396,7 @@ header{
 <!-- HAPPY MEAL OVERLAY -->
 <div class="happy-meal-overlay" id="happy-overlay">
   <div class="happy-meal-card">
-    <img src="https://static.prod-images.emergentagent.com/jobs/90c85498-9c3b-40db-8e83-76855311b095/images/3d94cd369d397f2863ef795daa8cd45a41e990f0af2612cfe6fa1562df69cafe.png" alt="yummy" onerror="this.textContent='😋';this.style.fontSize='80px'">
+    <img src="https://static.prod-images.emergentagent.com/jobs/90c85498-9c3b-40db-8e83-76855311b095/images/3d94cd369d397f2863ef795daa8cd45a41e990f0af2612cfe6fa1562df69cafe.png" alt="yummy">
     <h2>Have a Happy Meal! 🎉</h2>
     <p>Your order has been delivered. Enjoy your delicious food!</p>
     <button class="happy-close-btn" onclick="document.getElementById('happy-overlay').classList.remove('open');showPage('home')">Back to Menu</button>
@@ -405,7 +407,7 @@ header{
 <div class="order-float" id="order-float">
   <button class="order-float-close" onclick="document.getElementById('order-float').classList.remove('show')">✕</button>
   <div class="order-float-header">
-    <img class="order-float-icon" id="order-icon" src="https://static.prod-images.emergentagent.com/jobs/90c85498-9c3b-40db-8e83-76855311b095/images/d5249f9c03de553a2f76ad6024ef955839e48cf2d36785be68bc0c3148e43b84.png" alt="preparing">
+    <img class="order-float-icon" id="order-icon" src="https://static.prod-images.emergentagent.com/jobs/90c85498-9c3b-40db-8e83-76855311b095/images/d5249f9c03de553a2f76ad6024ef955839e48cf2d36785be68bc0c3148e43b84.png" alt="Order">
     <div>
       <h4 id="order-status-title">Your order is preparing...</h4>
       <p id="order-status-sub">Estimated: 10-15 mins</p>
@@ -421,13 +423,25 @@ header{
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script>
-const MENU = [
-  {id:'fish-curry',name:'Fish Curry',price:179,type:'nonveg',img:'https://images.unsplash.com/photo-1654863404432-cac67587e25d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzV8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBmaXNoJTIwY3VycnklMjBib3dsJTIwY2xvc2UlMjB1cHxlbnwwfHx8fDE3Nzk3ODE4NzN8MA&ixlib=rb-4.1.0&q=85',recommended:true},
-  {id:'fish-fry',name:'Fish Fry',price:149,type:'nonveg',img:'https://images.unsplash.com/photo-1665401015549-712c0dc5ef85?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBmaXNoJTIwZnJ5JTIwZGlzaHxlbnwwfHx8fDE3Nzk3ODE4NzN8MA&ixlib=rb-4.1.0&q=85',recommended:false},
-  {id:'palak-paneer',name:'Palak Paneer',price:139,type:'veg',img:'https://images.pexels.com/photos/31249589/pexels-photo-31249589.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',recommended:false}
-];
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+// Firebase Config (same as admin panel)
+const firebaseConfig = {
+  apiKey: "AIzaSyAHze7tEfPEbpyDr6FdlF-vNbQ_oVnHk9U",
+  authDomain: "mm-cooking-bowl.firebaseapp.com",
+  projectId: "mm-cooking-bowl",
+  storageBucket: "mm-cooking-bowl.firebasestorage.app",
+  messagingSenderId: "848879523693",
+  appId: "1:848879523693:web:65ba75400364e016fa6c64",
+  measurementId: "G-203833P63D"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let MENU = [];
 let cart = JSON.parse(localStorage.getItem('mmcart')||'[]');
 let user = JSON.parse(localStorage.getItem('mmuser')||'null');
 let currentFilter = 'all';
@@ -435,6 +449,18 @@ let pendingItem = null;
 let authTab = 'login';
 let otpStep = false;
 let orderTimer = null;
+
+// Load menu from Firestore
+function loadMenu() {
+  const q = query(collection(db, "menu"), orderBy("timestamp", "desc"));
+  onSnapshot(q, (snapshot) => {
+    MENU = [];
+    snapshot.forEach(doc => {
+      MENU.push({ id: doc.id, ...doc.data() });
+    });
+    renderMenu();
+  });
+}
 
 function saveCart(){localStorage.setItem('mmcart',JSON.stringify(cart))}
 function saveUser(){localStorage.setItem('mmuser',JSON.stringify(user))}
@@ -479,24 +505,24 @@ function renderMenu(){
   }).join('');
 }
 
-function setFilter(f,btn){
+window.setFilter = function(f,btn){
   currentFilter=f;
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderMenu();
 }
 
-function getCartQty(id){
+window.getCartQty = function(id){
   const item = cart.find(c=>c.id===id);
   return item?item.quantity:0;
 }
 
-function handleAdd(id){
+window.handleAdd = function(id){
   if(!user){pendingItem=id;openAuthModal();return;}
   addToCart(id);
 }
 
-function addToCart(id){
+window.addToCart = function(id){
   const item = MENU.find(m=>m.id===id);
   const existing = cart.find(c=>c.id===id);
   if(existing) existing.quantity++;
@@ -505,7 +531,7 @@ function addToCart(id){
   showToast(`${item.name} added to cart! 🛒`);
 }
 
-function changeQty(id,delta){
+window.changeQty = function(id,delta){
   if(!user){openAuthModal();return;}
   const idx = cart.findIndex(c=>c.id===id);
   if(idx===-1) return;
@@ -514,7 +540,7 @@ function changeQty(id,delta){
   saveCart();updateCartBadge();renderMenu();
 }
 
-function updateCartBadge(){
+window.updateCartBadge = function(){
   const total = cart.reduce((s,i)=>s+i.quantity,0);
   const badge = document.getElementById('cart-badge');
   badge.textContent=total;
@@ -522,7 +548,7 @@ function updateCartBadge(){
 }
 
 // CART RENDER
-function renderCart(){
+window.renderCart = function(){
   const container = document.getElementById('cart-content');
   if(cart.length===0){
     container.innerHTML=`<div style="background:#fff;border-radius:20px;border:1px solid var(--border)">
@@ -570,7 +596,7 @@ function renderCart(){
   </div>`;
 }
 
-function cartChangeQty(id,delta){
+window.cartChangeQty = function(id,delta){
   const idx = cart.findIndex(c=>c.id===id);
   if(idx===-1) return;
   cart[idx].quantity+=delta;
@@ -578,7 +604,7 @@ function cartChangeQty(id,delta){
   saveCart();updateCartBadge();renderCart();renderMenu();
 }
 
-function placeOrder(){
+window.placeOrder = function(){
   if(!user){openAuthModal();return;}
   cart=[];saveCart();updateCartBadge();renderCart();
   showPage('home');renderMenu();
@@ -586,7 +612,7 @@ function placeOrder(){
 }
 
 // ORDER TRACKING
-function startOrderTracking(){
+window.startOrderTracking = function(){
   const float = document.getElementById('order-float');
   const icon = document.getElementById('order-icon');
   const title = document.getElementById('order-status-title');
@@ -600,7 +626,6 @@ function startOrderTracking(){
   document.getElementById('prog3').classList.remove('done');
 
   if(orderTimer) clearTimeout(orderTimer);
-  // For demo: 8s = on the way, 16s = delivered
   orderTimer = setTimeout(()=>{
     icon.src='https://static.prod-images.emergentagent.com/jobs/90c85498-9c3b-40db-8e83-76855311b095/images/48d60fdc04a86a51de5a2db05bc660aec8eec7bd353309a72bd93045dd4b11b7.png';
     title.textContent='Your order is on the way! 🛵';
@@ -615,16 +640,16 @@ function startOrderTracking(){
 }
 
 // AUTH MODAL
-function openAuthModal(tab='login'){
+window.openAuthModal = function(tab='login'){
   authTab=tab;
   document.getElementById('auth-modal').classList.add('open');
   renderAuthForm();
 }
-function closeAuthModal(){
+window.closeAuthModal = function(){
   document.getElementById('auth-modal').classList.remove('open');
   pendingItem=null;otpStep=false;
 }
-function switchAuthTab(tab){
+window.switchAuthTab = function(tab){
   authTab=tab;otpStep=false;
   document.querySelectorAll('#auth-tabs .tab-btn').forEach((b,i)=>{
     b.classList.toggle('active',(i===0&&tab==='login')||(i===1&&tab==='signup'));
@@ -642,7 +667,8 @@ function renderAuthForm(){
       </div>
       <div id="otp-error" class="error-msg" style="text-align:center;margin-bottom:12px"></div>
       <button class="submit-btn" onclick="verifyOTP()">Verify OTP ✓</button>
-      <p style="text-align:center;margin-top:12px;font-size:12px;color:var(--text2)"><a href="#" style="color:var(--orange);text-decoration:none" onclick="otpStep=false;renderAuthForm()">← Back</a></p>`;
+      <p style="text-align:center;margin-top:12px;font-size:12px;color:var(--text2)"><a href="#" style="color:var(--orange);text-decoration:none" onclick="otpStep=false;renderAuthForm()">← Back</a></p>
+    `;
     setTimeout(()=>document.getElementById('otp0')&&document.getElementById('otp0').focus(),100);
     return;
   }
@@ -663,7 +689,7 @@ function renderAuthForm(){
   }
 }
 
-function doLogin(){
+window.doLogin = function(){
   const email = document.getElementById('login-email').value.trim();
   const pass = document.getElementById('login-pass').value;
   if(!email||!pass){document.getElementById('login-error').textContent='Please fill all fields';return;}
@@ -675,7 +701,7 @@ function doLogin(){
   saveUser();afterLogin();
 }
 
-function doSignup(){
+window.doSignup = function(){
   const name=document.getElementById('su-name').value.trim();
   const email=document.getElementById('su-email').value.trim();
   const mobile=document.getElementById('su-mobile').value.trim();
@@ -687,12 +713,12 @@ function doSignup(){
   otpStep=true;renderAuthForm();
 }
 
-function otpNext(i){
+window.otpNext = function(i){
   const v=document.getElementById('otp'+i).value;
   if(v&&i<5) document.getElementById('otp'+(i+1)).focus();
 }
 
-function verifyOTP(){
+window.verifyOTP = function(){
   let otp='';
   for(let i=0;i<6;i++) otp+=document.getElementById('otp'+i).value;
   if(otp!=='123456'){document.getElementById('otp-error').textContent='Incorrect OTP. Use 123456 for demo.';return;}
@@ -704,12 +730,12 @@ function afterLogin(){
   if(pendingItem){const id=pendingItem;pendingItem=null;addToCart(id);}
 }
 
-function logout(){
+window.logout = function(){
   user=null;localStorage.removeItem('mmuser');
   updateUserUI();closeDrawer();showToast('Logged out successfully');cart=[];saveCart();updateCartBadge();renderMenu();
 }
 
-function updateUserUI(){
+window.updateUserUI = function(){
   const area=document.getElementById('user-info-area');
   const logout=document.getElementById('logout-area');
   if(user){
@@ -722,16 +748,16 @@ function updateUserUI(){
 }
 
 // DRAWER
-function openDrawer(){
+window.openDrawer = function(){
   document.getElementById('drawer').classList.add('open');
   document.getElementById('drawer-overlay').classList.add('open');
   setDrawerSection('accounts');
 }
-function closeDrawer(){
+window.closeDrawer = function(){
   document.getElementById('drawer').classList.remove('open');
   document.getElementById('drawer-overlay').classList.remove('open');
 }
-function setDrawerSection(s){
+window.setDrawerSection = function(s){
   document.querySelectorAll('.drawer-item').forEach(i=>i.classList.remove('active-item'));
   event&&event.currentTarget&&event.currentTarget.classList.add('active-item');
   const c=document.getElementById('drawer-section-content');
@@ -749,7 +775,7 @@ function setDrawerSection(s){
 }
 
 // TOAST
-function showToast(msg){
+window.showToast = function(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),3000);
@@ -758,7 +784,7 @@ function showToast(msg){
 // INIT
 updateCartBadge();
 updateUserUI();
-renderMenu();
+loadMenu();
 </script>
 </body>
 </html>
