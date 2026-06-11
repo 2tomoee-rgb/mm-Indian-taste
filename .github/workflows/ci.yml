@@ -1,40 +1,6 @@
-name: Deploy to GitHub Pages
-
-on:
-  push:
-    branches: ["main"]
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-        
-      - name: Build
-        run: echo "Building site..."
-        
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: github-pages
-          path: .
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+git clone https://github.com/2tomoee-rgb/mm-Indian-taste.git
+cd mm-Indian-taste
+# Replace .github/workflows/ci.yml with the fixed version
+git add .github/workflows/ci.yml
+git commit -m "Fix: Upload only HTML files to avoid symlinks and size issues"
+git push
