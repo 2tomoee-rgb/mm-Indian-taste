@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MM Cooking Bowl</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -293,7 +291,7 @@ header{
 <!-- HEADER -->
 <header>
   <div class="logo-area">
-    <img class="logo-img" src="https://customer-assets.emergentagent.com/job_90c85498-9c3b-40db-8e83-76855311b095/artifacts/jar0s7rv_WhatsApp%20Image%202026-05-26%20at%201.13.46%20PM.jpeg" alt="MM">
+    <img class="logo-img" src="https://customer-assets.emergentagent.com/job_90c85498-9c3b-40db-8e83-76855311b095/artifacts/jar0s7rv_WhatsApp%20Image%202026-05-26%20at%201.13.46%20PM.jpeg" alt="MM Logo">
     <div class="logo-text">
       <h2>MM Cooking Bowl</h2>
       <p>Authentic Bharatiya Ruchi</p>
@@ -318,7 +316,7 @@ header{
     </div>
     <div style="display:flex;align-items:center;gap:14px">
       <div class="discount-badge">USE: MMFIRST</div>
-      <img class="banner-img" src="https://static.prod-images.emergentagent.com/jobs/90c85498-9c3b-40db-8e83-76855311b095/images/d5249f9c03de553a2f76ad6024ef955839e48cf2d36785be68bc0c3148e43b84.png" alt="Bowl">
+      <img class="banner-img" src="https://static.prod-images.emergentagent.com/jobs/90c85498-9c3b-40db-8e83-76855311b095/images/d5249f9c03de553a2f76ad6024ef955839e48cf2d36785be68bc0c3148e43b84.png" alt="Promo">
     </div>
   </div>
 
@@ -407,7 +405,7 @@ header{
 <div class="order-float" id="order-float">
   <button class="order-float-close" onclick="document.getElementById('order-float').classList.remove('show')">✕</button>
   <div class="order-float-header">
-    <img class="order-float-icon" id="order-icon" src="https://static.prod-images.emergentagent.com/jobs/90c85498-9c3b-40db-8e83-76855311b095/images/d5249f9c03de553a2f76ad6024ef955839e48cf2d36785be68bc0c3148e43b84.png" alt="Order">
+    <img class="order-float-icon" id="order-icon" src="https://static.prod-images.emergentagent.com/jobs/90c85498-9c3b-40db-8e83-76855311b095/images/d5249f9c03de553a2f76ad6024ef955839e48cf2d36785be68bc0c3148e43b84.png" alt="order">
     <div>
       <h4 id="order-status-title">Your order is preparing...</h4>
       <p id="order-status-sub">Estimated: 10-15 mins</p>
@@ -423,25 +421,18 @@ header{
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<script>
+const MENU = [
+  {id:'fish-curry',name:'Fish Curry',price:179,type:'nonveg',img:'https://images.unsplash.com/photo-1654863404432-cac67587e25d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzV8MHwxfHNlYXJjaHwxfHxpbmR'},
+  {id:'fish-fry',name:'Fish Fry',price:149,type:'nonveg',img:'https://images.unsplash.com/photo-1665401015549-712c0dc5ef85?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwxfHxpbmRpYW4'},
+  {id:'palak-paneer',name:'Palak Paneer',price:139,type:'veg',img:'https://images.pexels.com/photos/31249589/pexels-photo-31249589.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',recommended:true},
+  {id:'butter-chicken',name:'Butter Chicken',price:189,type:'nonveg',img:'https://images.unsplash.com/photo-1603893918501-bf6b9fa1f70d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzV8MHwxfHNlYXJjaHwxfHxidXR0ZXJ',recommended:true},
+  {id:'chikhalwali-naan',name:'Chhikhalwali Naan',price:49,type:'veg',img:'https://images.unsplash.com/photo-1571407168874-faa328e1abf9?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzV8MHwxfHNlYXJjaHwx'},
+  {id:'tandoori-chicken',name:'Tandoori Chicken',price:199,type:'nonveg',img:'https://images.unsplash.com/photo-1599599810694-f3ee39e94ce5?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzV8MHwxfHNlYXJjaHwx'},
+  {id:'paneer-tikka',name:'Paneer Tikka',price:119,type:'veg',img:'https://images.unsplash.com/photo-1568695041226-37c71c43c548?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzV8MHwxfHNlYXJjaHwx'},
+  {id:'biriyani',name:'Biryani',price:159,type:'nonveg',img:'https://images.unsplash.com/photo-1596040421446-1f3fd05c1b9c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzV8MHwxfHNlYXJjaHwx'}
+];
 
-// Firebase Config (same as admin panel)
-const firebaseConfig = {
-  apiKey: "AIzaSyAHze7tEfPEbpyDr6FdlF-vNbQ_oVnHk9U",
-  authDomain: "mm-cooking-bowl.firebaseapp.com",
-  projectId: "mm-cooking-bowl",
-  storageBucket: "mm-cooking-bowl.firebasestorage.app",
-  messagingSenderId: "848879523693",
-  appId: "1:848879523693:web:65ba75400364e016fa6c64",
-  measurementId: "G-203833P63D"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-let MENU = [];
 let cart = JSON.parse(localStorage.getItem('mmcart')||'[]');
 let user = JSON.parse(localStorage.getItem('mmuser')||'null');
 let currentFilter = 'all';
@@ -449,18 +440,6 @@ let pendingItem = null;
 let authTab = 'login';
 let otpStep = false;
 let orderTimer = null;
-
-// Load menu from Firestore
-function loadMenu() {
-  const q = query(collection(db, "menu"), orderBy("timestamp", "desc"));
-  onSnapshot(q, (snapshot) => {
-    MENU = [];
-    snapshot.forEach(doc => {
-      MENU.push({ id: doc.id, ...doc.data() });
-    });
-    renderMenu();
-  });
-}
 
 function saveCart(){localStorage.setItem('mmcart',JSON.stringify(cart))}
 function saveUser(){localStorage.setItem('mmuser',JSON.stringify(user))}
@@ -505,24 +484,24 @@ function renderMenu(){
   }).join('');
 }
 
-window.setFilter = function(f,btn){
+function setFilter(f,btn){
   currentFilter=f;
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderMenu();
 }
 
-window.getCartQty = function(id){
+function getCartQty(id){
   const item = cart.find(c=>c.id===id);
   return item?item.quantity:0;
 }
 
-window.handleAdd = function(id){
+function handleAdd(id){
   if(!user){pendingItem=id;openAuthModal();return;}
   addToCart(id);
 }
 
-window.addToCart = function(id){
+function addToCart(id){
   const item = MENU.find(m=>m.id===id);
   const existing = cart.find(c=>c.id===id);
   if(existing) existing.quantity++;
@@ -531,7 +510,7 @@ window.addToCart = function(id){
   showToast(`${item.name} added to cart! 🛒`);
 }
 
-window.changeQty = function(id,delta){
+function changeQty(id,delta){
   if(!user){openAuthModal();return;}
   const idx = cart.findIndex(c=>c.id===id);
   if(idx===-1) return;
@@ -540,7 +519,7 @@ window.changeQty = function(id,delta){
   saveCart();updateCartBadge();renderMenu();
 }
 
-window.updateCartBadge = function(){
+function updateCartBadge(){
   const total = cart.reduce((s,i)=>s+i.quantity,0);
   const badge = document.getElementById('cart-badge');
   badge.textContent=total;
@@ -548,7 +527,7 @@ window.updateCartBadge = function(){
 }
 
 // CART RENDER
-window.renderCart = function(){
+function renderCart(){
   const container = document.getElementById('cart-content');
   if(cart.length===0){
     container.innerHTML=`<div style="background:#fff;border-radius:20px;border:1px solid var(--border)">
@@ -596,7 +575,7 @@ window.renderCart = function(){
   </div>`;
 }
 
-window.cartChangeQty = function(id,delta){
+function cartChangeQty(id,delta){
   const idx = cart.findIndex(c=>c.id===id);
   if(idx===-1) return;
   cart[idx].quantity+=delta;
@@ -604,7 +583,7 @@ window.cartChangeQty = function(id,delta){
   saveCart();updateCartBadge();renderCart();renderMenu();
 }
 
-window.placeOrder = function(){
+function placeOrder(){
   if(!user){openAuthModal();return;}
   cart=[];saveCart();updateCartBadge();renderCart();
   showPage('home');renderMenu();
@@ -612,7 +591,7 @@ window.placeOrder = function(){
 }
 
 // ORDER TRACKING
-window.startOrderTracking = function(){
+function startOrderTracking(){
   const float = document.getElementById('order-float');
   const icon = document.getElementById('order-icon');
   const title = document.getElementById('order-status-title');
@@ -640,16 +619,16 @@ window.startOrderTracking = function(){
 }
 
 // AUTH MODAL
-window.openAuthModal = function(tab='login'){
+function openAuthModal(tab='login'){
   authTab=tab;
   document.getElementById('auth-modal').classList.add('open');
   renderAuthForm();
 }
-window.closeAuthModal = function(){
+function closeAuthModal(){
   document.getElementById('auth-modal').classList.remove('open');
   pendingItem=null;otpStep=false;
 }
-window.switchAuthTab = function(tab){
+function switchAuthTab(tab){
   authTab=tab;otpStep=false;
   document.querySelectorAll('#auth-tabs .tab-btn').forEach((b,i)=>{
     b.classList.toggle('active',(i===0&&tab==='login')||(i===1&&tab==='signup'));
@@ -689,7 +668,7 @@ function renderAuthForm(){
   }
 }
 
-window.doLogin = function(){
+function doLogin(){
   const email = document.getElementById('login-email').value.trim();
   const pass = document.getElementById('login-pass').value;
   if(!email||!pass){document.getElementById('login-error').textContent='Please fill all fields';return;}
@@ -701,7 +680,7 @@ window.doLogin = function(){
   saveUser();afterLogin();
 }
 
-window.doSignup = function(){
+function doSignup(){
   const name=document.getElementById('su-name').value.trim();
   const email=document.getElementById('su-email').value.trim();
   const mobile=document.getElementById('su-mobile').value.trim();
@@ -713,12 +692,12 @@ window.doSignup = function(){
   otpStep=true;renderAuthForm();
 }
 
-window.otpNext = function(i){
+function otpNext(i){
   const v=document.getElementById('otp'+i).value;
   if(v&&i<5) document.getElementById('otp'+(i+1)).focus();
 }
 
-window.verifyOTP = function(){
+function verifyOTP(){
   let otp='';
   for(let i=0;i<6;i++) otp+=document.getElementById('otp'+i).value;
   if(otp!=='123456'){document.getElementById('otp-error').textContent='Incorrect OTP. Use 123456 for demo.';return;}
@@ -730,12 +709,12 @@ function afterLogin(){
   if(pendingItem){const id=pendingItem;pendingItem=null;addToCart(id);}
 }
 
-window.logout = function(){
+function logout(){
   user=null;localStorage.removeItem('mmuser');
   updateUserUI();closeDrawer();showToast('Logged out successfully');cart=[];saveCart();updateCartBadge();renderMenu();
 }
 
-window.updateUserUI = function(){
+function updateUserUI(){
   const area=document.getElementById('user-info-area');
   const logout=document.getElementById('logout-area');
   if(user){
@@ -748,16 +727,16 @@ window.updateUserUI = function(){
 }
 
 // DRAWER
-window.openDrawer = function(){
+function openDrawer(){
   document.getElementById('drawer').classList.add('open');
   document.getElementById('drawer-overlay').classList.add('open');
   setDrawerSection('accounts');
 }
-window.closeDrawer = function(){
+function closeDrawer(){
   document.getElementById('drawer').classList.remove('open');
   document.getElementById('drawer-overlay').classList.remove('open');
 }
-window.setDrawerSection = function(s){
+function setDrawerSection(s){
   document.querySelectorAll('.drawer-item').forEach(i=>i.classList.remove('active-item'));
   event&&event.currentTarget&&event.currentTarget.classList.add('active-item');
   const c=document.getElementById('drawer-section-content');
@@ -775,7 +754,7 @@ window.setDrawerSection = function(s){
 }
 
 // TOAST
-window.showToast = function(msg){
+function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),3000);
@@ -784,7 +763,7 @@ window.showToast = function(msg){
 // INIT
 updateCartBadge();
 updateUserUI();
-loadMenu();
+renderMenu();
 </script>
 </body>
 </html>
